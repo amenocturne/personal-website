@@ -1,0 +1,53 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create deploy directory
+        run: mkdir -p deploy
+
+      - name: Copy files to deploy directory
+        run: |
+          cp index.html deploy/
+          cp styles.css deploy/
+          cp -r * deploy/ 2>/dev/null || true
+
+      - name: Build Docker image
+        run: |
+          cat > Dockerfile << EOF
+          FROM nginx:alpine
+          COPY deploy/ /usr/share/nginx/html/
+          EXPOSE 80
+          EOF
+          docker build -t personal-website:latest .
+
+      - name: Save and transfer image
+        run: |
+          # Save image to compressed tar
+          docker save personal-website:latest | gzip > personal-website.tar.gz
+
+          # Setup SSH
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.DEPLOY_SERVER_IP }} >> ~/.ssh/known_hosts
+
+          # Transfer to VPS
+          scp personal-website.tar.gz deployer@${{ secrets.DEPLOY_SERVER_IP }}:/tmp/
+
+          # Load and deploy on VPS
+          ssh deployer@${{ secrets.DEPLOY_SERVER_IP }} '
+            docker load < /tmp/personal-website.tar.gz
+            docker stop personal-website || true
+            docker rm personal-website || true
+            docker run -d --name personal-website --restart unless-stopped -p 8002:80 personal-website:latest
+            rm /tmp/personal-website.tar.gz
+          '
