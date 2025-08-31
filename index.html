@@ -104,6 +104,58 @@
     if (localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light-theme');
     }
+
+    // Mouse proximity animation for cards
+    let mouseX = 0;
+    let mouseY = 0;
+    let animationId;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      
+      if (!animationId) {
+        animationId = requestAnimationFrame(updateCardPositions);
+      }
+    });
+
+    function updateCardPositions() {
+      const cards = document.querySelectorAll('.text-panel');
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      
+      cards.forEach((card, index) => {
+        let targetX, targetY, distance;
+        
+        if (index === 0) { // card-1 (Software Development - left side)
+          const cornerX = 0;
+          const cornerY = windowHeight / 2;
+          distance = Math.sqrt(Math.pow(mouseX - cornerX, 2) + Math.pow(mouseY - cornerY, 2));
+          const maxDistance = windowWidth * 0.4;
+          const proximity = Math.max(0, 1 - distance / maxDistance);
+          targetX = -30 + (proximity * 35);
+          card.style.transform = `translateY(-50%) translateX(${targetX}vw) rotate(-2deg)`;
+        } else if (index === 1) { // card-2 (Sound Design - bottom side)
+          const cornerX = windowWidth / 2;
+          const cornerY = windowHeight;
+          distance = Math.sqrt(Math.pow(mouseX - cornerX, 2) + Math.pow(mouseY - cornerY, 2));
+          const maxDistance = windowHeight * 0.5;
+          const proximity = Math.max(0, 1 - distance / maxDistance);
+          targetY = 20 - (proximity * 30);
+          card.style.transform = `translateX(-50%) translateY(${targetY}vh) rotate(1deg)`;
+        } else if (index === 2) { // card-3 (Projects - right side)
+          const cornerX = windowWidth;
+          const cornerY = windowHeight / 2;
+          distance = Math.sqrt(Math.pow(mouseX - cornerX, 2) + Math.pow(mouseY - cornerY, 2));
+          const maxDistance = windowWidth * 0.4;
+          const proximity = Math.max(0, 1 - distance / maxDistance);
+          targetX = 30 - (proximity * 35);
+          card.style.transform = `translateY(-50%) translateX(${targetX}vw) rotate(-1deg)`;
+        }
+      });
+      
+      animationId = null;
+    }
   </script>
 </body>
 
