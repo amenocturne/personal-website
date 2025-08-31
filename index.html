@@ -123,6 +123,7 @@
       const cards = document.querySelectorAll('.text-panel');
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
+      const isMobile = windowWidth <= 768;
       
       cards.forEach((card, index) => {
         let targetX, targetY, distance;
@@ -131,25 +132,31 @@
           const cornerX = 0;
           const cornerY = windowHeight / 2;
           distance = Math.sqrt(Math.pow(mouseX - cornerX, 2) + Math.pow(mouseY - cornerY, 2));
-          const maxDistance = windowWidth * 0.4;
+          const maxDistance = windowWidth * (isMobile ? 0.5 : 0.4);
           const proximity = Math.max(0, 1 - distance / maxDistance);
-          targetX = -30 + (proximity * 35);
+          const startX = isMobile ? -70 : -30;
+          const slideDistance = isMobile ? 75 : 35;
+          targetX = startX + (proximity * slideDistance);
           card.style.transform = `translateY(-50%) translateX(${targetX}vw) rotate(-2deg)`;
         } else if (index === 1) { // card-2 (Sound Design - bottom side)
           const cornerX = windowWidth / 2;
           const cornerY = windowHeight;
           distance = Math.sqrt(Math.pow(mouseX - cornerX, 2) + Math.pow(mouseY - cornerY, 2));
-          const maxDistance = windowHeight * 0.5;
+          const maxDistance = windowHeight * (isMobile ? 0.6 : 0.5);
           const proximity = Math.max(0, 1 - distance / maxDistance);
-          targetY = 20 - (proximity * 30);
+          const startY = isMobile ? 15 : 20;
+          const slideDistance = isMobile ? 25 : 30;
+          targetY = startY - (proximity * slideDistance);
           card.style.transform = `translateX(-50%) translateY(${targetY}vh) rotate(1deg)`;
         } else if (index === 2) { // card-3 (Projects - right side)
           const cornerX = windowWidth;
           const cornerY = windowHeight / 2;
           distance = Math.sqrt(Math.pow(mouseX - cornerX, 2) + Math.pow(mouseY - cornerY, 2));
-          const maxDistance = windowWidth * 0.4;
+          const maxDistance = windowWidth * (isMobile ? 0.5 : 0.4);
           const proximity = Math.max(0, 1 - distance / maxDistance);
-          targetX = 30 - (proximity * 35);
+          const startX = isMobile ? 70 : 30;
+          const slideDistance = isMobile ? 75 : 35;
+          targetX = startX - (proximity * slideDistance);
           card.style.transform = `translateY(-50%) translateX(${targetX}vw) rotate(-1deg)`;
         }
       });

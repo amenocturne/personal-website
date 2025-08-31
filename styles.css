@@ -529,7 +529,6 @@ body.light-theme::before {
         padding-left: 1rem;
     }
 
-
     .content-cards {
         padding: 2rem 1rem;
     }
@@ -547,14 +546,37 @@ body.light-theme::before {
         gap: 1rem;
     }
 
-    .panel-glass {
-        padding: 2rem 1.5rem;
+    .text-panel {
+        width: min(350px, 80vw);
     }
 
-    .card-1, .card-2, .card-3 {
-        margin-left: 4vw;
-        margin-right: 4vw;
-        max-width: none;
+    .panel-glass {
+        padding: 1.5rem;
+    }
+
+    .card-1 {
+        transform: translateY(-50%) translateX(-70vw) rotate(-2deg);
+    }
+
+    .card-2 {
+        transform: translateX(-50%) translateY(15vh) rotate(1deg);
+    }
+
+    .card-3 {
+        transform: translateY(-50%) translateX(70vw) rotate(-1deg);
+    }
+
+    .panel-glass h3 {
+        font-size: 1.2rem;
+    }
+
+    .panel-glass p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .card-number {
+        font-size: 0.7rem;
     }
 }
 
